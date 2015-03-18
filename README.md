@@ -3,3 +3,8 @@ This little exe app converts an input directory to an output directory using suc
 
 
 Build live at https://dl.dropboxusercontent.com/u/7953296/ImageConversionAndResizerPlusOtherThingsBatcherTool.zip
+
+
+Created using Visual Studio 2013 Comunity: https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
+
+Just download the source zip, and open in VS
