@@ -94,6 +94,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GT_Logo.png" />
     <Content Include="Magick.NET-x64.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
