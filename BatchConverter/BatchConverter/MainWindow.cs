@@ -57,28 +57,49 @@ namespace BatchConverter
                 LOCKBUTTONS = true;
                 Task t = Task.Factory.StartNew(() =>
               {
-                  var _base = "8";
-                  var shaft = "=";
-                  var tip = "D";
-                  Progress_Output.BeginInvoke(new MethodInvoker(() =>
-                   {
-                       Progress_Output.Text = _base + shaft + tip;
-                   }));
-                  foreach (var directory in Directory.GetDirectories(ChoosenDirectory))
+
+                  try
                   {
-                      ChoosenDirectory = directory;
-                      if (ParseChoosenDirectory())
-                          ProcessCurrentDirectory();
-                      shaft += "=";
+                      var _base = "|";
+                      var shaft = "=";
+                      var tip = "|";
+                      Progress_Output.BeginInvoke(new MethodInvoker(() =>
+                       {
+                           Progress_Output.Text = _base + shaft + tip;
+                       }));
+                      foreach (var directory in Directory.GetDirectories(ChoosenDirectory))
+                      {
+                          try
+                          {
+                              ChoosenDirectory = directory;
+                              if (ParseChoosenDirectory())
+                                  ProcessCurrentDirectory();
+                              shaft += "=";
+                              Progress_Output.BeginInvoke(new MethodInvoker(() =>
+                              {
+                                  Progress_Output.Text = _base + shaft + tip;
+                              }));
+                          }
+                          catch (Exception eee)
+                          {
+                              Output.BeginInvoke(new MethodInvoker(() =>
+                              {
+                                  Output.AppendText("Ouch! Something went wrong");
+                              }));
+                          }
+                      }
                       Progress_Output.BeginInvoke(new MethodInvoker(() =>
                       {
-                          Progress_Output.Text = _base + shaft + tip;
+                          Progress_Output.Text = _base + shaft + tip + "!! Complete";
                       }));
                   }
-                  Progress_Output.BeginInvoke(new MethodInvoker(() =>
+                  catch (Exception ee)
                   {
-                      Progress_Output.Text = _base + shaft + tip + "~~ Complete";
-                  }));
+                      Output.BeginInvoke(new MethodInvoker(() =>
+                      {
+                          Output.AppendText("Ouch! Something went wrong");
+                      }));
+                  }
                   LOCKBUTTONS = false;
               });
             }
