@@ -9,4 +9,3 @@ C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Release
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Release\Magick.NET-x64.dll
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.exe
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.pdb
-C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.csprojResolveAssemblyReference.cache
