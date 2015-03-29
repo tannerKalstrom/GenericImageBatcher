@@ -17,6 +17,7 @@ namespace BatchConverter
 
     public partial class MainWindow : Form
     {
+        #region Properties
         private bool Halt_Bool = false;
         private string ChoosenDirectory = "";
         private string OutputDirectory {get { return ChoosenDirectory + @"\OUTPUT\";}}
@@ -49,27 +50,71 @@ namespace BatchConverter
         public Color GoodColor = Color.LightGreen;
         public Color BadColor = Color.LightPink;
 
+        public bool Eligable_For_Processing { get; set; }
+        public bool Eligable_For_Batching { get; set; }
 
-       
+        public bool FilesLookCorrect { get; set; }
+        public int sum_subs { get; set; }
+        public bool LOCKBUTTONS { get; set; }
+        public Dictionary<Control, Color> OgiginColors = new Dictionary<Control, Color>();
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        #region Core_Functions
+        private void InitializeUserSettings()
+        {
+            overwrite.BeginInvoke(new MethodInvoker(() =>
+            {
+                overwrite.Checked = Properties.Settings.Default.Overwrite;
+            }));
+            verbose.BeginInvoke(new MethodInvoker(() =>
+            {
+                verbose.Checked = Properties.Settings.Default.Verbose;
+            }));
+            ui.BeginInvoke(new MethodInvoker(() =>
+            {
+                ui.Checked = Properties.Settings.Default.UI;
+            }));
+            ChoosenDirectory = Properties.Settings.Default.LastDirectory;
+            text_ActiveDirectory.BeginInvoke(new MethodInvoker(() =>
+            {
+                text_ActiveDirectory.Text = ChoosenDirectory;
+            }));
+        }
         
         public void DebuggingOutput(string output, bool force_output = false){
-            if (checkBox2.Checked || force_output)
+            if (verbose.Checked || force_output)
                 Output.BeginInvoke(new MethodInvoker(() =>
                 {
-                    Output.AppendText(output + "\n");
+                    Output.Text =( output + System.Environment.NewLine.ToString()) + Output.Text;
                 }));
         }
+        private void Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+            InitializeUserSettings();
+        }
+        #endregion
+
+        #region ProcessingLogic
         private void Batch_Process_Click(object sender, EventArgs e)
         {
-            if (!Eligable_For_Batching) return;
+            if (!Eligable_For_Batching)
+            {
+                DebuggingOutput("Folder doesnt meet requirements for batching",true);
+                return;
+            }
             if (!LOCKBUTTONS)
             {
                 Halt_Bool = false;
-                LOCKBUTTONS = true;
+                LOCKTHEBUTTONS(true);
                 Task t = Task.Factory.StartNew(() =>
               {
 
@@ -115,19 +160,66 @@ namespace BatchConverter
                           DebuggingOutput("Ouch! Something went wrong");
                       }));
                   }
-                  LOCKBUTTONS = false;
+                  LOCKTHEBUTTONS(false);
               });
             }
                   
         }
-      
 
-        private void button1_Click(object sender, EventArgs e)
+        private void LOCKTHEBUTTONS(bool p)
         {
-            if (!LOCKBUTTONS && Eligable_For_Processing)
+            LOCKBUTTONS = p;
+            if (p)
+            {
+                button_ChooseActiveDirectory.BeginInvoke(new MethodInvoker(() =>
+                {
+                    button_ChooseActiveDirectory.Enabled = false;
+                }));
+                ProcessSingleDirectory.BeginInvoke(new MethodInvoker(() =>
+                {
+                    ProcessSingleDirectory.Enabled = false;
+                }));
+                Batch_Process.BeginInvoke(new MethodInvoker(() =>
+                {
+                    Batch_Process.Enabled = false;
+                }));
+                Halt.BeginInvoke(new MethodInvoker(() =>
+                {
+                    Halt.Enabled = true;
+                }));
+            }
+            else
+            {
+                button_ChooseActiveDirectory.BeginInvoke(new MethodInvoker(() =>
+                {
+                    button_ChooseActiveDirectory.Enabled = true;
+                }));
+                ProcessSingleDirectory.BeginInvoke(new MethodInvoker(() =>
+                {
+                    ProcessSingleDirectory.Enabled = true;
+                }));
+                Batch_Process.BeginInvoke(new MethodInvoker(() =>
+                {
+                    Batch_Process.Enabled = true;
+                }));
+                Halt.BeginInvoke(new MethodInvoker(() =>
+                {
+                    Halt.Enabled = false;
+                }));
+            }
+        }
+      
+        private void Process_Single_Directopry_Clicked(object sender, EventArgs e)
+        {
+            if (!Eligable_For_Processing)
+            {
+                DebuggingOutput("Folder doesnt meet requirements for processing", true);
+                return;
+            }
+            if (!LOCKBUTTONS)
             {
                 Halt_Bool = false;
-                LOCKBUTTONS = true;
+                LOCKTHEBUTTONS(true);
                 Task t = Task.Factory.StartNew(() =>
               {
                   bool run = true;
@@ -142,7 +234,7 @@ namespace BatchConverter
                       ProcessCurrentDirectory();
                   }
               });
-                LOCKBUTTONS = false;
+                LOCKTHEBUTTONS(false);
             }
         }
 
@@ -152,7 +244,7 @@ namespace BatchConverter
             DebuggingOutput("Start Batcher: " + ChoosenDirectory);
             Directory.CreateDirectory(OutputDirectory);
             if (Halt_Bool) return;
-            DebuggingOutput("Begin Zipping");          
+            DebuggingOutput("Begin Zipping");
             Zip_Files();
             if (Halt_Bool) return;
             DebuggingOutput("Shrinking");
@@ -165,6 +257,15 @@ namespace BatchConverter
             if (Halt_Bool) return;
         }
 
+        private void Halt_Click(object sender, EventArgs e)
+        {
+            DebuggingOutput("Halting!");
+            Halt_Bool = true;
+            LOCKTHEBUTTONS(false);
+        }
+        #endregion
+
+        #region Compositing Images
         private void CompositePNGs()
         {
             if (has_WebDirectory)
@@ -204,19 +305,12 @@ namespace BatchConverter
                 }
             }
         }
+        #endregion
 
-       
-        
-
-        private void ResetFlashingChooseDirectory()
-        {
-        }
-        
-
-
+        #region ScaleImage
         private void DownscaleForWeb()
         {
-            if(!string.IsNullOrEmpty(ChoosenDirectory))
+            if(!string.IsNullOrEmpty(ChoosenDirectory) && !Directory.Exists(Output_Web))
                 Directory.CreateDirectory(Output_Web);
             if (has_PBR_Specular)
             {
@@ -226,9 +320,9 @@ namespace BatchConverter
                     {
                         if (file.EndsWith(".tga"))
                         {
+                            MagickImage image = new MagickImage(file);
                             var filename = Path.GetFileNameWithoutExtension(file);
                             filename += ".jpg";
-                            MagickImage image = new MagickImage(file);
                             image.Scale(WebSize, WebSize);
                             image.Write(Output_Web + filename);
                         }
@@ -241,7 +335,9 @@ namespace BatchConverter
                 }
             }
         }
+        #endregion
 
+        #region ZIPPING
         private void Zip_Files()
         {
 
@@ -299,6 +395,9 @@ namespace BatchConverter
             }
         }
 
+        #endregion
+
+        #region CopyDirectory
         private void Copy_SubstanceFiles()
         {
             if (Directory.Exists(Substance))
@@ -314,42 +413,12 @@ namespace BatchConverter
                     File.Copy(newPath, newPath.Replace(Substance, Output_Substance), true);
             }
         }
+        #endregion
 
-        private void ResetFlashingOutput()
-        {
-            FlashingOutput = false;
-        }
-
-        public bool FlashingOutput { get; set; }
-        private void FlashControlToColor(Control activeControl, Color eventColour)
-        {
-            if (!checkBox1.Checked) return;
-            uint intervals = 100;
-            var origin_color = activeControl.BackColor;
-            var colorFader = new ColorFader(eventColour, origin_color, intervals);
-            Task t = Task.Factory.StartNew(() =>
-            {
-                foreach (var color in colorFader.Fade())
-                {
-                    SetControlBackColor(activeControl, color);
-                    System.Threading.Thread.Sleep(10);
-                }
-            });
-        }
-
-        private void SetControlBackColor(Control activeControl,Color color)
-        {
-            if (activeControl.InvokeRequired)
-                activeControl.Invoke((MethodInvoker)delegate { activeControl.BackColor = color; });
-            else
-                activeControl.BackColor = color;
-        }
+        #region FilePicker
         private void button_ChooseActiveDirectory_Click(object sender, EventArgs e)
         {
-            //
-            // This event handler was created by double-clicking the window in the designer.
-            // It runs on the program's startup routine.
-            //
+            if (LOCKBUTTONS) return;
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             if(!string.IsNullOrEmpty(ChoosenDirectory))
                 dialog.SelectedPath = ChoosenDirectory;
@@ -357,11 +426,15 @@ namespace BatchConverter
 
             if (result == DialogResult.OK)
             {
+                ChoosenDirectory = dialog.SelectedPath;
+                DebuggingOutput("User Picked: " + ChoosenDirectory, true);
                 if (dialog.SelectedPath != ChoosenDirectory)
                 {
-                    ChoosenDirectory = dialog.SelectedPath;
-                    SetActiveDirectory();
+                    Properties.Settings.Default.LastDirectory = ChoosenDirectory;
+                    Properties.Settings.Default.Save();
                 }
+                SetActiveDirectory();
+                ButtonHint();
             }
             else
             {
@@ -371,8 +444,18 @@ namespace BatchConverter
             DebuggingOutput("Completed parsing files in directory");
         }
 
+        private void ButtonHint()
+        {
+            if (Eligable_For_Batching) FlashControlToColor(Batch_Process, GoodColor);
+            else FlashControlToColor(Batch_Process, BadColor);
+            if (Eligable_For_Processing) FlashControlToColor(ProcessSingleDirectory, GoodColor);
+            else FlashControlToColor(ProcessSingleDirectory, BadColor);
+
+        }
+
         private void SetActiveDirectory()
         {
+            DebuggingOutput("Entering Directory: " + ChoosenDirectory, true);
             Check_For_Folders();
             Process_Eligability();
             if (Eligable_For_Processing)
@@ -380,7 +463,9 @@ namespace BatchConverter
                 ScanChosenDirectory();
             }
         }
+        #endregion
 
+        #region ScanDirectoriesForStructure
         private void Process_Eligability()
         {
             Eligable_For_Processing = false;
@@ -399,7 +484,7 @@ namespace BatchConverter
         private void Check_For_Folders()
         {
             has_PBR_Metalic= Directory.Exists(PBR_Metalic);
-            has_PBR_Metalic = Directory.Exists(PBR_Specular);
+            has_PBR_Specular = Directory.Exists(PBR_Specular);
             has_Substance = Directory.Exists(Substance);
             has_WebDirectory = Directory.Exists(WebDirectory);
             sum_subs = Directory.GetDirectories(ChoosenDirectory).Count();
@@ -535,71 +620,73 @@ namespace BatchConverter
             }
             return FilesLookCorrect;
         }
-                
-    
-public  bool FilesLookCorrect { get; set; }
+        #endregion
 
-    private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        #region UI_Options
+
+        private void WebScale_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(WebSizeEntryBox.Text, out WebSize))
+            {
+                DebuggingOutput("WebSize set to: " + WebSize);
+            }
+            else
+            {
+                WebSize = 1024;
+            }
+        }
+        #region Checkboxes
+        private void Verbose_Clicked(object sender, EventArgs e)
     {
-
+        Properties.Settings.Default.Verbose = verbose.Checked;
+        DebuggingOutput("Debugging Outputs: " + verbose.Checked,true);
+        Properties.Settings.Default.Save();
     }
 
-
-
-    public int sum_subs { get; set; }
-
-    public bool LOCKBUTTONS { get; set; }
-
-    private void checkBox2_CheckedChanged(object sender, EventArgs e)
+    private void UI_Clicked(object sender, EventArgs e)
     {
-        DebuggingOutput("Debugging Outputs: " + checkBox2.Checked,true);
-    }
+        Properties.Settings.Default.UI = ui.Checked;
+        DebuggingOutput("UI Effects: " + ui.Checked, true);
+        Properties.Settings.Default.Save();
 
-    private void checkBox1_CheckedChanged(object sender, EventArgs e)
-    {
-        DebuggingOutput("UI Effects: " + checkBox1.Checked, true);
     }
 
     private void overwrite_CheckedChanged_1(object sender, EventArgs e)
     {
+        Properties.Settings.Default.Overwrite = overwrite.Checked;
         DebuggingOutput("Overwrite Outputs: " + overwrite.Checked, true);
-    }
-
-    private void textBox1_Validating(object sender, CancelEventArgs e)
-    {
+        Properties.Settings.Default.Save();
 
     }
+  
+    #endregion
+    #endregion
 
-    private void textBox1_TextChanged(object sender, EventArgs e)
+    #region UIEffects
+    private void FlashControlToColor(Control activeControl, Color eventColour)
     {
-        if (int.TryParse(textBox1.Text, out WebSize))
+        if (!ui.Checked) return;
+        uint intervals = 100;
+        if (!OgiginColors.ContainsKey(activeControl)) OgiginColors.Add(activeControl, activeControl.BackColor);
+        var colorFader = new ColorFader(eventColour, OgiginColors[activeControl], intervals);
+        Task t = Task.Factory.StartNew(() =>
         {
-            DebuggingOutput("WebSize set to: " + WebSize);
-        }
+            foreach (var color in colorFader.Fade())
+            {
+                SetControlBackColor(activeControl, color);
+                System.Threading.Thread.Sleep(10);
+            }
+        });
+    }
+
+    private void SetControlBackColor(Control activeControl, Color color)
+    {
+        if (activeControl.InvokeRequired)
+            activeControl.Invoke((MethodInvoker)delegate { activeControl.BackColor = color; });
         else
-        {
-            WebSize = 1024;
-        }
+            activeControl.BackColor = color;
     }
-
-    private void Exit_Click(object sender, EventArgs e)
-    {
-        Application.Exit();
     }
-
-    private void Halt_Click(object sender, EventArgs e)
-    {
-        DebuggingOutput("Halting!");
-        Halt_Bool = true;
-        LOCKBUTTONS = false;
-    }
-
-
-    public bool Eligable_For_Processing { get; set; }
-
-    public bool Eligable_For_Batching { get; set; }
-    }
-
     public class ColorFader
     {
         private readonly Color _From;
@@ -635,4 +722,8 @@ public  bool FilesLookCorrect { get; set; }
         }
     }
 }
+    #endregion
+
+
+  
 
