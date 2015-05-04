@@ -20,6 +20,8 @@ namespace BatchConverter
         #region Properties
         private bool Halt_Bool = false;
         private string ChoosenDirectory = "";
+        public string ChoosenReadme = Application.StartupPath + @"\Include\Readme.txt";
+        public string ChoosenScene = Application.StartupPath + @"\Include\3dScene.tbscene";
         private string OutputDirectory {get { return ChoosenDirectory + @"\OUTPUT\";}}
         private string WebDirectory { get { return ChoosenDirectory + @"\WEB\"; } }
         private string PBR_Metalic { get { return ChoosenDirectory + @"\PBR_Metallic"; } }
@@ -57,11 +59,59 @@ namespace BatchConverter
         public int sum_subs { get; set; }
         public bool LOCKBUTTONS { get; set; }
         public Dictionary<Control, Color> OgiginColors = new Dictionary<Control, Color>();
+
+        
         #endregion
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void InitializeGTDir_Click(object sender, EventArgs e)
+        {
+            DebuggingOutput("Starting Creating GT Directory Structures",true);
+            InitializeGTDir_Logic();
+            DebuggingOutput("Finnished Creating GT Directory Structures",true);
+            ScanChosenDirectory();
+        }
+
+        private void InitializeGTDir_Logic()
+        {
+            if (!string.IsNullOrEmpty(ChoosenDirectory)) CreateDirectoryStructure();
+            CopyGTFilesIntoDirectory();
+        }
+
+        private void CopyGTFilesIntoDirectory()
+        {
+            if (File.Exists(ChoosenReadme))
+            {
+                File.Copy(ChoosenReadme, PBR_Specular + Path.GetFileName(ChoosenReadme));
+                File.Copy(ChoosenReadme, PBR_Metalic + Path.GetFileName(ChoosenReadme));
+                File.Copy(ChoosenReadme, Substance + Path.GetFileName(ChoosenReadme));
+            }
+            else
+            {
+                DebuggingOutput("Readme not found");
+            }
+            if (File.Exists(ChoosenScene))
+            {
+                File.Copy(ChoosenScene, WebDirectory + Path.GetFileName(ChoosenScene));
+            }
+            else
+            {
+                DebuggingOutput("tbscene not found");
+            }
+            MagickImage DarkFile = new MagickImage(new MagickColor("#202020"), 1920, 1080);
+            DarkFile.Write(WebDirectory + "\\background.png");
+        }
+        private void CreateDirectoryStructure()
+        {
+           // if (!Directory.Exists(OutputDirectory)) Directory.CreateDirectory(OutputDirectory);
+            if (!Directory.Exists(WebDirectory)) Directory.CreateDirectory(WebDirectory);
+            if (!Directory.Exists(PBR_Metalic)) Directory.CreateDirectory(PBR_Metalic);
+            if (!Directory.Exists(PBR_Specular)) Directory.CreateDirectory(PBR_Specular);
+            if (!Directory.Exists(Substance)) Directory.CreateDirectory(Substance);
         }
 
         #region Core_Functions
@@ -84,6 +134,8 @@ namespace BatchConverter
             {
                 text_ActiveDirectory.Text = ChoosenDirectory;
             }));
+          //  ChoosenReadme = Properties.Settings.Default.ReadmeFile;
+           // ChoosenScene = Properties.Settings.Default.SceneFile;
         }
         
         public void DebuggingOutput(string output, bool force_output = false){
@@ -252,7 +304,7 @@ namespace BatchConverter
             if (Halt_Bool) return;
             DebuggingOutput("Compositing");
             CompositePNGs();
-            DebuggingOutput("Complete Batching!");
+            DebuggingOutput("Complete Processing GT Directory!");
             FlashControlToColor(Output, Color.LightGreen);
             if (Halt_Bool) return;
         }
@@ -686,6 +738,47 @@ namespace BatchConverter
         else
             activeControl.BackColor = color;
     }
+
+    private void Readme_Click(object sender, EventArgs e)
+    {
+        var dialog = new System.Windows.Forms.OpenFileDialog();
+        if (!string.IsNullOrEmpty(ChoosenReadme))
+            dialog.InitialDirectory = Path.GetDirectoryName(ChoosenReadme);
+        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            ChoosenReadme = dialog.FileName;
+            DebuggingOutput("User Picked: " + ChoosenReadme, true);
+            if (dialog.FileName != ChoosenReadme)
+            {
+                Properties.Settings.Default.ReadmeFile = ChoosenReadme;
+                Properties.Settings.Default.Save();
+            }
+        }
+    }
+
+    private void SelectTBScene_Click(object sender, EventArgs e)
+    {
+        var dialog = new System.Windows.Forms.OpenFileDialog();
+        if (!string.IsNullOrEmpty(ChoosenScene))
+            dialog.InitialDirectory = Path.GetDirectoryName(ChoosenScene);
+        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            ChoosenScene = dialog.FileName;
+            DebuggingOutput("User Picked: " + ChoosenScene, true);
+            if (dialog.FileName != ChoosenScene)
+            {
+                Properties.Settings.Default.SceneFile = ChoosenScene;
+                Properties.Settings.Default.Save();
+            }
+        }
+    }
+
+
+    
     }
     public class ColorFader
     {
