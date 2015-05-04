@@ -70,5 +70,34 @@ namespace BatchConverter.Properties {
                 this["LastDirectory"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ReadmeFile
+        {
+            get
+            {
+                return ((string)(this["ReadmeFile"]));
+            }
+            set
+            {
+                this["ReadmeFile"] = value;
+            }
+        }
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SceneFile
+        {
+            get
+            {
+                return ((string)(this["SceneFile"]));
+            }
+            set
+            {
+                this["SceneFile"] = value;
+            }
+        }
     }
 }

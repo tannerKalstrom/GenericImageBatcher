@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.Step2MainTable = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Output = new System.Windows.Forms.TextBox();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.SelectTBScene = new System.Windows.Forms.Button();
+            this.Readme = new System.Windows.Forms.Button();
             this.Web_Scale_Label = new System.Windows.Forms.Label();
             this.WebSizeEntryBox = new System.Windows.Forms.TextBox();
             this.verbose = new System.Windows.Forms.CheckBox();
@@ -46,42 +48,44 @@
             this.ProcessSingleDirectory = new System.Windows.Forms.Button();
             this.text_ActiveDirectory = new System.Windows.Forms.TextBox();
             this.button_ChooseActiveDirectory = new System.Windows.Forms.Button();
-            this.Header = new System.Windows.Forms.Panel();
-            this.Footer = new System.Windows.Forms.Panel();
-            this.Exit = new System.Windows.Forms.Button();
+            this.Step2Header = new System.Windows.Forms.Panel();
+            this.Step2Footer = new System.Windows.Forms.Panel();
+            this.InitializeDir = new System.Windows.Forms.Button();
             this.Halt = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.StepTwoPanel = new System.Windows.Forms.Panel();
+            this.Step2MainTable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.Header.SuspendLayout();
-            this.Footer.SuspendLayout();
+            this.Step2Header.SuspendLayout();
+            this.Step2Footer.SuspendLayout();
+            this.StepTwoPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tableLayoutPanel1
+            // Step2MainTable
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.20903F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.79097F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 161F));
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panel5, 2, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 40);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(420, 156);
-            this.tableLayoutPanel1.TabIndex = 2;
+            this.Step2MainTable.ColumnCount = 3;
+            this.Step2MainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.20903F));
+            this.Step2MainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.79097F));
+            this.Step2MainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 171F));
+            this.Step2MainTable.Controls.Add(this.panel1, 0, 0);
+            this.Step2MainTable.Controls.Add(this.panel5, 2, 0);
+            this.Step2MainTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Step2MainTable.Location = new System.Drawing.Point(0, 40);
+            this.Step2MainTable.Name = "Step2MainTable";
+            this.Step2MainTable.RowCount = 1;
+            this.Step2MainTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.Step2MainTable.Size = new System.Drawing.Size(529, 255);
+            this.Step2MainTable.TabIndex = 2;
             // 
             // panel1
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.panel1, 2);
+            this.Step2MainTable.SetColumnSpan(this.panel1, 2);
             this.panel1.Controls.Add(this.Output);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(252, 150);
+            this.panel1.Size = new System.Drawing.Size(351, 249);
             this.panel1.TabIndex = 6;
             // 
             // Output
@@ -94,11 +98,13 @@
             this.Output.Name = "Output";
             this.Output.ReadOnly = true;
             this.Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Output.Size = new System.Drawing.Size(252, 150);
+            this.Output.Size = new System.Drawing.Size(351, 249);
             this.Output.TabIndex = 4;
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.SelectTBScene);
+            this.panel5.Controls.Add(this.Readme);
             this.panel5.Controls.Add(this.Web_Scale_Label);
             this.panel5.Controls.Add(this.WebSizeEntryBox);
             this.panel5.Controls.Add(this.verbose);
@@ -106,10 +112,30 @@
             this.panel5.Controls.Add(this.overwrite);
             this.panel5.Controls.Add(this.tableLayoutPanel3);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(261, 3);
+            this.panel5.Location = new System.Drawing.Point(360, 3);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(156, 150);
+            this.panel5.Size = new System.Drawing.Size(166, 249);
             this.panel5.TabIndex = 7;
+            // 
+            // SelectTBScene
+            // 
+            this.SelectTBScene.Location = new System.Drawing.Point(3, 181);
+            this.SelectTBScene.Name = "SelectTBScene";
+            this.SelectTBScene.Size = new System.Drawing.Size(96, 23);
+            this.SelectTBScene.TabIndex = 12;
+            this.SelectTBScene.Text = "Select tbscene";
+            this.SelectTBScene.UseVisualStyleBackColor = true;
+            this.SelectTBScene.Click += new System.EventHandler(this.SelectTBScene_Click);
+            // 
+            // Readme
+            // 
+            this.Readme.Location = new System.Drawing.Point(3, 152);
+            this.Readme.Name = "Readme";
+            this.Readme.Size = new System.Drawing.Size(96, 23);
+            this.Readme.TabIndex = 11;
+            this.Readme.Text = "Select Readme";
+            this.Readme.UseVisualStyleBackColor = true;
+            this.Readme.Click += new System.EventHandler(this.Readme_Click);
             // 
             // Web_Scale_Label
             // 
@@ -178,17 +204,17 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(156, 57);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(166, 57);
             this.tableLayoutPanel3.TabIndex = 5;
             // 
             // Progress_Output
             // 
             this.Progress_Output.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Progress_Output.Location = new System.Drawing.Point(80, 31);
+            this.Progress_Output.Location = new System.Drawing.Point(85, 31);
             this.Progress_Output.Multiline = true;
             this.Progress_Output.Name = "Progress_Output";
             this.Progress_Output.ReadOnly = true;
-            this.Progress_Output.Size = new System.Drawing.Size(73, 23);
+            this.Progress_Output.Size = new System.Drawing.Size(78, 23);
             this.Progress_Output.TabIndex = 4;
             this.Progress_Output.Text = "0";
             // 
@@ -199,18 +225,18 @@
             this.ProgressLabel.Multiline = true;
             this.ProgressLabel.Name = "ProgressLabel";
             this.ProgressLabel.ReadOnly = true;
-            this.ProgressLabel.Size = new System.Drawing.Size(71, 23);
+            this.ProgressLabel.Size = new System.Drawing.Size(76, 23);
             this.ProgressLabel.TabIndex = 3;
             this.ProgressLabel.Text = "Progress";
             // 
             // SubDirectories_Output
             // 
             this.SubDirectories_Output.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SubDirectories_Output.Location = new System.Drawing.Point(80, 3);
+            this.SubDirectories_Output.Location = new System.Drawing.Point(85, 3);
             this.SubDirectories_Output.Multiline = true;
             this.SubDirectories_Output.Name = "SubDirectories_Output";
             this.SubDirectories_Output.ReadOnly = true;
-            this.SubDirectories_Output.Size = new System.Drawing.Size(73, 22);
+            this.SubDirectories_Output.Size = new System.Drawing.Size(78, 22);
             this.SubDirectories_Output.TabIndex = 2;
             this.SubDirectories_Output.Text = "0";
             // 
@@ -221,29 +247,29 @@
             this.SubDirectories.Multiline = true;
             this.SubDirectories.Name = "SubDirectories";
             this.SubDirectories.ReadOnly = true;
-            this.SubDirectories.Size = new System.Drawing.Size(71, 22);
+            this.SubDirectories.Size = new System.Drawing.Size(76, 22);
             this.SubDirectories.TabIndex = 1;
             this.SubDirectories.Text = "SubDirectories";
             // 
             // Batch_Process
             // 
             this.Batch_Process.BackColor = System.Drawing.SystemColors.Control;
-            this.Batch_Process.Location = new System.Drawing.Point(121, 3);
+            this.Batch_Process.Location = new System.Drawing.Point(204, 3);
             this.Batch_Process.Name = "Batch_Process";
-            this.Batch_Process.Size = new System.Drawing.Size(112, 34);
+            this.Batch_Process.Size = new System.Drawing.Size(77, 34);
             this.Batch_Process.TabIndex = 4;
-            this.Batch_Process.Text = "Recursive Process Directories";
+            this.Batch_Process.Text = "Batch Process GT";
             this.Batch_Process.UseVisualStyleBackColor = false;
             this.Batch_Process.Click += new System.EventHandler(this.Batch_Process_Click);
             // 
             // ProcessSingleDirectory
             // 
             this.ProcessSingleDirectory.BackColor = System.Drawing.SystemColors.Control;
-            this.ProcessSingleDirectory.Location = new System.Drawing.Point(3, 3);
+            this.ProcessSingleDirectory.Location = new System.Drawing.Point(86, 3);
             this.ProcessSingleDirectory.Name = "ProcessSingleDirectory";
             this.ProcessSingleDirectory.Size = new System.Drawing.Size(112, 34);
             this.ProcessSingleDirectory.TabIndex = 3;
-            this.ProcessSingleDirectory.Text = "Process Single Directory";
+            this.ProcessSingleDirectory.Text = "Process GT Directory";
             this.ProcessSingleDirectory.UseVisualStyleBackColor = false;
             this.ProcessSingleDirectory.Click += new System.EventHandler(this.Process_Single_Directopry_Clicked);
             // 
@@ -254,7 +280,7 @@
             this.text_ActiveDirectory.Multiline = true;
             this.text_ActiveDirectory.Name = "text_ActiveDirectory";
             this.text_ActiveDirectory.ReadOnly = true;
-            this.text_ActiveDirectory.Size = new System.Drawing.Size(308, 40);
+            this.text_ActiveDirectory.Size = new System.Drawing.Size(417, 40);
             this.text_ActiveDirectory.TabIndex = 2;
             // 
             // button_ChooseActiveDirectory
@@ -269,44 +295,42 @@
             this.button_ChooseActiveDirectory.UseVisualStyleBackColor = false;
             this.button_ChooseActiveDirectory.Click += new System.EventHandler(this.button_ChooseActiveDirectory_Click);
             // 
-            // Header
+            // Step2Header
             // 
-            this.Header.Controls.Add(this.text_ActiveDirectory);
-            this.Header.Controls.Add(this.button_ChooseActiveDirectory);
-            this.Header.Dock = System.Windows.Forms.DockStyle.Top;
-            this.Header.Location = new System.Drawing.Point(0, 0);
-            this.Header.Name = "Header";
-            this.Header.Size = new System.Drawing.Size(420, 40);
-            this.Header.TabIndex = 5;
+            this.Step2Header.Controls.Add(this.text_ActiveDirectory);
+            this.Step2Header.Controls.Add(this.button_ChooseActiveDirectory);
+            this.Step2Header.Dock = System.Windows.Forms.DockStyle.Top;
+            this.Step2Header.Location = new System.Drawing.Point(0, 0);
+            this.Step2Header.Name = "Step2Header";
+            this.Step2Header.Size = new System.Drawing.Size(529, 40);
+            this.Step2Header.TabIndex = 5;
             // 
-            // Footer
+            // Step2Footer
             // 
-            this.Footer.Controls.Add(this.Exit);
-            this.Footer.Controls.Add(this.Halt);
-            this.Footer.Controls.Add(this.Batch_Process);
-            this.Footer.Controls.Add(this.ProcessSingleDirectory);
-            this.Footer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Footer.Location = new System.Drawing.Point(0, 196);
-            this.Footer.Name = "Footer";
-            this.Footer.Size = new System.Drawing.Size(420, 40);
-            this.Footer.TabIndex = 6;
+            this.Step2Footer.Controls.Add(this.InitializeDir);
+            this.Step2Footer.Controls.Add(this.Halt);
+            this.Step2Footer.Controls.Add(this.Batch_Process);
+            this.Step2Footer.Controls.Add(this.ProcessSingleDirectory);
+            this.Step2Footer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.Step2Footer.Location = new System.Drawing.Point(0, 295);
+            this.Step2Footer.Name = "Step2Footer";
+            this.Step2Footer.Size = new System.Drawing.Size(529, 40);
+            this.Step2Footer.TabIndex = 6;
             // 
-            // Exit
+            // InitializeDir
             // 
-            this.Exit.BackColor = System.Drawing.SystemColors.Control;
-            this.Exit.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Exit.Location = new System.Drawing.Point(377, 0);
-            this.Exit.Name = "Exit";
-            this.Exit.Size = new System.Drawing.Size(43, 40);
-            this.Exit.TabIndex = 6;
-            this.Exit.Text = "Close";
-            this.Exit.UseVisualStyleBackColor = false;
-            this.Exit.Click += new System.EventHandler(this.Exit_Click);
+            this.InitializeDir.Location = new System.Drawing.Point(3, 3);
+            this.InitializeDir.Name = "InitializeDir";
+            this.InitializeDir.Size = new System.Drawing.Size(77, 34);
+            this.InitializeDir.TabIndex = 6;
+            this.InitializeDir.Text = "Initialize GT Directory";
+            this.InitializeDir.UseVisualStyleBackColor = true;
+            this.InitializeDir.Click += new System.EventHandler(this.InitializeGTDir_Click);
             // 
             // Halt
             // 
             this.Halt.BackColor = System.Drawing.SystemColors.Control;
-            this.Halt.Location = new System.Drawing.Point(239, 3);
+            this.Halt.Location = new System.Drawing.Point(287, 3);
             this.Halt.Name = "Halt";
             this.Halt.Size = new System.Drawing.Size(69, 34);
             this.Halt.TabIndex = 5;
@@ -314,37 +338,47 @@
             this.Halt.UseVisualStyleBackColor = false;
             this.Halt.Click += new System.EventHandler(this.Halt_Click);
             // 
+            // StepTwoPanel
+            // 
+            this.StepTwoPanel.Controls.Add(this.Step2MainTable);
+            this.StepTwoPanel.Controls.Add(this.Step2Footer);
+            this.StepTwoPanel.Controls.Add(this.Step2Header);
+            this.StepTwoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StepTwoPanel.Location = new System.Drawing.Point(0, 0);
+            this.StepTwoPanel.Name = "StepTwoPanel";
+            this.StepTwoPanel.Size = new System.Drawing.Size(529, 335);
+            this.StepTwoPanel.TabIndex = 0;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.ClientSize = new System.Drawing.Size(420, 236);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.Header);
-            this.Controls.Add(this.Footer);
+            this.ClientSize = new System.Drawing.Size(529, 335);
+            this.Controls.Add(this.StepTwoPanel);
             this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(175, 175);
             this.Name = "MainWindow";
             this.Text = "TextureBatcher";
             this.Load += new System.EventHandler(this.MainWindow_Load);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.Step2MainTable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            this.Header.ResumeLayout(false);
-            this.Header.PerformLayout();
-            this.Footer.ResumeLayout(false);
+            this.Step2Header.ResumeLayout(false);
+            this.Step2Header.PerformLayout();
+            this.Step2Footer.ResumeLayout(false);
+            this.StepTwoPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel Step2MainTable;
         private System.Windows.Forms.TextBox text_ActiveDirectory;
         private System.Windows.Forms.Button button_ChooseActiveDirectory;
         private System.Windows.Forms.Panel panel1;
@@ -360,12 +394,15 @@
         private System.Windows.Forms.CheckBox verbose;
         private System.Windows.Forms.CheckBox ui;
         private System.Windows.Forms.CheckBox overwrite;
-        private System.Windows.Forms.Panel Header;
+        private System.Windows.Forms.Panel Step2Header;
         private System.Windows.Forms.Label Web_Scale_Label;
         private System.Windows.Forms.TextBox WebSizeEntryBox;
-        private System.Windows.Forms.Panel Footer;
-        private System.Windows.Forms.Button Exit;
+        private System.Windows.Forms.Panel Step2Footer;
         private System.Windows.Forms.Button Halt;
+        private System.Windows.Forms.Panel StepTwoPanel;
+        private System.Windows.Forms.Button InitializeDir;
+        private System.Windows.Forms.Button SelectTBScene;
+        private System.Windows.Forms.Button Readme;
     }
 }
 
