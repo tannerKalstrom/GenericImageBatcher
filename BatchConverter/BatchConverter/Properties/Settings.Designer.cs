@@ -70,33 +70,40 @@ namespace BatchConverter.Properties {
                 this["LastDirectory"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ReadmeFile
-        {
-            get
-            {
-                return ((string)(this["ReadmeFile"]));
+        public string tbScene {
+            get {
+                return ((string)(this["tbScene"]));
             }
-            set
-            {
-                this["ReadmeFile"] = value;
+            set {
+                this["tbScene"] = value;
             }
         }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SceneFile
-        {
-            get
-            {
-                return ((string)(this["SceneFile"]));
+        public string readmefile {
+            get {
+                return ((string)(this["readmefile"]));
             }
-            set
-            {
-                this["SceneFile"] = value;
+            set {
+                this["readmefile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string substancefolder {
+            get {
+                return ((string)(this["substancefolder"]));
+            }
+            set {
+                this["substancefolder"] = value;
             }
         }
     }

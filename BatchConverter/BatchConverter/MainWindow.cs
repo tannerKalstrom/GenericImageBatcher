@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading;
 using FORMS = System.Windows.Forms;
+using System.Diagnostics;
 namespace BatchConverter
 {
 
@@ -27,6 +28,8 @@ namespace BatchConverter
         private string PBR_Metalic { get { return ChoosenDirectory + @"\PBR_Metallic"; } }
         private string PBR_Specular { get { return ChoosenDirectory + @"\PBR_Specular"; } }
         private string Substance { get { return ChoosenDirectory + @"\Substance"; } }
+
+
 
         private bool has_PBR_Metalic { get; set; }
         private bool has_PBR_Specular { get; set; }
@@ -51,6 +54,7 @@ namespace BatchConverter
         public string Eat {get;set;}
         public Color GoodColor = Color.LightGreen;
         public Color BadColor = Color.LightPink;
+        public string sbsar = string.Empty;
 
         public bool Eligable_For_Processing { get; set; }
         public bool Eligable_For_Batching { get; set; }
@@ -66,6 +70,14 @@ namespace BatchConverter
         public MainWindow()
         {
             InitializeComponent();
+            Properties.Settings.Default.Upgrade();
+            Label_Readme.Text = Properties.Settings.Default.readmefile;
+            Label_TbScene.Text = Properties.Settings.Default.tbScene;
+            Label_Substance.Text = Properties.Settings.Default.substancefolder;
+            SubstanceDir = Properties.Settings.Default.substancefolder;
+
+            Update();
+
         }
 
         private void InitializeGTDir_Click(object sender, EventArgs e)
@@ -80,6 +92,7 @@ namespace BatchConverter
         {
             if (!string.IsNullOrEmpty(ChoosenDirectory)) CreateDirectoryStructure();
             CopyGTFilesIntoDirectory();
+
         }
 
         private void CopyGTFilesIntoDirectory()
@@ -415,8 +428,28 @@ namespace BatchConverter
             if (!File.Exists(Output_Substance))
             {
                 DebuggingOutput("Creating new Substance zip");
-                ZipFile.CreateFromDirectory(Substance, Output_Substance);
+                SubstanceFileGenerationAndZip();
+                //ZipFile.CreateFromDirectory(Substance, Output_Substance);
             }
+        }
+
+        private void SubstanceFileGenerationAndZip()
+        {
+            // Start the child process.
+            Process p = new Process();
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = SubstanceDir;
+            p.StartInfo.Arguments = "--inputs " + sbsar + @" --output-path C\Test\Fake --"  ;
+            p.Start();
+            // Do not wait for the child process to exit before
+            // reading to the end of its redirected stream.
+            // p.WaitForExit();
+            // Read the output stream first and then wait.
+            string output = p.StandardOutput.ReadToEnd();
+           
+            p.WaitForExit();
         }
 
         private void Zip_PBR_Metalic()
@@ -608,6 +641,10 @@ namespace BatchConverter
                         }));
                     }
                 }
+                if (EExtensions.Contains(".tga"))
+                {
+                    SubstanceMode = true;
+                }
             }
             catch (Exception ee)
             {
@@ -750,11 +787,12 @@ namespace BatchConverter
         {
             ChoosenReadme = dialog.FileName;
             DebuggingOutput("User Picked: " + ChoosenReadme, true);
-            if (dialog.FileName != ChoosenReadme)
-            {
-                Properties.Settings.Default.ReadmeFile = ChoosenReadme;
-                Properties.Settings.Default.Save();
-            }
+         
+                Properties.Settings.Default.readmefile = ChoosenReadme;
+               Properties.Settings.Default.Save();
+            
+            Label_Readme.BeginInvoke((MethodInvoker)delegate { Label_Readme.Text = Properties.Settings.Default.readmefile; Update(); });
+
         }
     }
 
@@ -769,16 +807,67 @@ namespace BatchConverter
         {
             ChoosenScene = dialog.FileName;
             DebuggingOutput("User Picked: " + ChoosenScene, true);
-            if (dialog.FileName != ChoosenScene)
-            {
-                Properties.Settings.Default.SceneFile = ChoosenScene;
+           
+                Properties.Settings.Default.tbScene = ChoosenScene;
                 Properties.Settings.Default.Save();
-            }
+
+                Label_TbScene.BeginInvoke((MethodInvoker)delegate { Label_TbScene.Text = Properties.Settings.Default.tbScene; Update(); });
+
         }
     }
 
 
-    
+
+
+    public bool SubstanceMode { get; set; }
+
+    private void panel5_Paint(object sender, PaintEventArgs e)
+    {
+
+    }
+
+    private void Substance_Button(object sender, EventArgs e)
+    {
+        var dialog = new System.Windows.Forms.OpenFileDialog();
+        if (!string.IsNullOrEmpty(SubstanceDir))
+            dialog.InitialDirectory = Path.GetDirectoryName(SubstanceDir);
+        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            SubstanceDir = dialog.FileName;
+            DebuggingOutput("User Picked: " + SubstanceDir, true);
+
+            Properties.Settings.Default.substancefolder = SubstanceDir;
+            Properties.Settings.Default.Save();
+
+            Label_Substance.BeginInvoke((MethodInvoker)delegate { Label_Substance.Text = Properties.Settings.Default.substancefolder; Update(); });
+
+        }
+    }
+
+    public string SubstanceDir { get; set; }
+        
+
+    private void SubstanceScriptButton_Click(object sender, EventArgs e)
+    {
+        var dialog = new System.Windows.Forms.OpenFileDialog();
+        if (!string.IsNullOrEmpty(SubstanceDir))
+            dialog.InitialDirectory = Path.GetDirectoryName(SubstanceDir);
+        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            SubstanceDir = dialog.FileName;
+            DebuggingOutput("User Picked: " + SubstanceDir, true);
+
+           // Properties.Settings.Default.SubstanceScriptPath = SubstanceDir;
+            Properties.Settings.Default.Save();
+
+            Label_Substance.BeginInvoke((MethodInvoker)delegate { Label_Substance.Text = Properties.Settings.Default.substancefolder; Update(); });
+
+        }
+    }
     }
     public class ColorFader
     {
