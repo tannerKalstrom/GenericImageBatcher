@@ -20,14 +20,15 @@ namespace BatchConverter
     {
         #region Properties
         private bool Halt_Bool = false;
-        private string ChoosenDirectory = "";
+        private string ChosenDirectory = "";
         public string ChoosenReadme = Application.StartupPath + @"\Include\Readme.txt";
         public string ChoosenScene = Application.StartupPath + @"\Include\3dScene.tbscene";
-        private string OutputDirectory {get { return ChoosenDirectory + @"\OUTPUT\";}}
-        private string WebDirectory { get { return ChoosenDirectory + @"\WEB\"; } }
-        private string PBR_Metalic { get { return ChoosenDirectory + @"\PBR_Metallic"; } }
-        private string PBR_Specular { get { return ChoosenDirectory + @"\PBR_Specular"; } }
-        private string Substance { get { return ChoosenDirectory + @"\Substance"; } }
+        private string OutputDirectory {get { return ChosenDirectory + @"\OUTPUT\";}}
+        private string SBRAROutputDirectory { get { return ChosenDirectory + @"\SbrarRenders\"; } }
+        private string WebDirectory { get { return ChosenDirectory + @"\WEB"; } }
+        private string PBR_Metalic { get { return ChosenDirectory + @"\PBR_Metallic"; } }
+        private string PBR_Specular { get { return ChosenDirectory + @"\PBR_Specular"; } }
+        private string Substance { get { return ChosenDirectory + @"\Substance"; } }
 
 
 
@@ -54,7 +55,6 @@ namespace BatchConverter
         public string Eat {get;set;}
         public Color GoodColor = Color.LightGreen;
         public Color BadColor = Color.LightPink;
-        public string sbsar = string.Empty;
 
         public bool Eligable_For_Processing { get; set; }
         public bool Eligable_For_Batching { get; set; }
@@ -75,6 +75,7 @@ namespace BatchConverter
             Label_TbScene.Text = Properties.Settings.Default.tbScene;
             Label_Substance.Text = Properties.Settings.Default.substancefolder;
             SubstanceDir = Properties.Settings.Default.substancefolder;
+            ChosenDirectory = Properties.Settings.Default.LastDirectory;
 
             Update();
 
@@ -85,13 +86,67 @@ namespace BatchConverter
             DebuggingOutput("Starting Creating GT Directory Structures",true);
             InitializeGTDir_Logic();
             DebuggingOutput("Finnished Creating GT Directory Structures",true);
-            ScanChosenDirectory();
+            SetActiveDirectory();
         }
 
         private void InitializeGTDir_Logic()
         {
-            if (!string.IsNullOrEmpty(ChoosenDirectory)) CreateDirectoryStructure();
-            CopyGTFilesIntoDirectory();
+            if (!string.IsNullOrEmpty(ChosenDirectory))
+            {
+                CreateDirectoryStructure();
+                RenderSBRAR();
+                CopyGTFilesIntoDirectory();
+            }
+
+        }
+
+        private void RenderSBRAR()
+        {
+            var files = Directory.GetFiles(ChosenDirectory);
+           
+           foreach(var file in files)
+            {
+                var ext = Path.GetExtension(file);
+               var name = Path.GetFileNameWithoutExtension(file);
+                if (ext == ".sbsar")
+                {
+                    SubstanceFileGenerationAndZip(file);
+                    MoveExistingFilesIntoFinalPositions(SBRAROutputDirectory, name);
+                    File.Move(file, Substance + "\\" + Path.GetFileName(file));
+                }
+            }
+           if (Directory.Exists(SBRAROutputDirectory)) Directory.Delete(SBRAROutputDirectory);
+        }
+
+
+
+        private void MoveExistingFilesIntoFinalPositions(string InputDirectory, string mask)
+        {
+            foreach (string file in Directory.GetFiles(InputDirectory))
+            {
+                if (Path.GetExtension(file) == ".tga")
+                {
+                    SortTGA(file,mask);
+                }
+            }
+        }
+
+        private void SortTGA(string file, string mask)
+        {
+            var normalized_file_name = file.ToLower();
+            var thi = Path.GetFileName(file);
+            var corrected_file_path = thi.Substring(thi.LastIndexOf(mask));
+            normalized_file_name=Path.GetFileNameWithoutExtension(normalized_file_name);
+            if (normalized_file_name.EndsWith("diffuse") || normalized_file_name.EndsWith("gloss") || normalized_file_name.EndsWith("specular"))
+                File.Copy(file, PBR_Specular + "\\" + Path.GetFileName(corrected_file_path));
+            else if (normalized_file_name.EndsWith("basecolor") || normalized_file_name.EndsWith("roughness") || normalized_file_name.EndsWith("metallic"))
+                File.Copy(file, PBR_Metalic + "\\" + Path.GetFileName(corrected_file_path));
+            else
+            {
+                File.Copy(file, PBR_Metalic + "\\" + Path.GetFileName(corrected_file_path));
+                File.Copy(file, PBR_Specular + "\\" + Path.GetFileName(corrected_file_path));
+            }
+            File.Delete(file);
 
         }
 
@@ -99,9 +154,9 @@ namespace BatchConverter
         {
             if (File.Exists(ChoosenReadme))
             {
-                File.Copy(ChoosenReadme, PBR_Specular + Path.GetFileName(ChoosenReadme));
-                File.Copy(ChoosenReadme, PBR_Metalic + Path.GetFileName(ChoosenReadme));
-                File.Copy(ChoosenReadme, Substance + Path.GetFileName(ChoosenReadme));
+                File.Copy(ChoosenReadme, PBR_Specular +"\\"+ Path.GetFileName(ChoosenReadme));
+                File.Copy(ChoosenReadme, PBR_Metalic + "\\" + Path.GetFileName(ChoosenReadme));
+                File.Copy(ChoosenReadme, Substance + "\\" + Path.GetFileName(ChoosenReadme));
             }
             else
             {
@@ -109,7 +164,7 @@ namespace BatchConverter
             }
             if (File.Exists(ChoosenScene))
             {
-                File.Copy(ChoosenScene, WebDirectory + Path.GetFileName(ChoosenScene));
+                File.Copy(ChoosenScene, WebDirectory + "\\" + Path.GetFileName(ChoosenScene));
             }
             else
             {
@@ -120,7 +175,7 @@ namespace BatchConverter
         }
         private void CreateDirectoryStructure()
         {
-           // if (!Directory.Exists(OutputDirectory)) Directory.CreateDirectory(OutputDirectory);
+            if (!Directory.Exists(SBRAROutputDirectory)) Directory.CreateDirectory(SBRAROutputDirectory);
             if (!Directory.Exists(WebDirectory)) Directory.CreateDirectory(WebDirectory);
             if (!Directory.Exists(PBR_Metalic)) Directory.CreateDirectory(PBR_Metalic);
             if (!Directory.Exists(PBR_Specular)) Directory.CreateDirectory(PBR_Specular);
@@ -142,10 +197,10 @@ namespace BatchConverter
             {
                 ui.Checked = Properties.Settings.Default.UI;
             }));
-            ChoosenDirectory = Properties.Settings.Default.LastDirectory;
+            ChosenDirectory = Properties.Settings.Default.LastDirectory;
             text_ActiveDirectory.BeginInvoke(new MethodInvoker(() =>
             {
-                text_ActiveDirectory.Text = ChoosenDirectory;
+                text_ActiveDirectory.Text = ChosenDirectory;
             }));
           //  ChoosenReadme = Properties.Settings.Default.ReadmeFile;
            // ChoosenScene = Properties.Settings.Default.SceneFile;
@@ -190,12 +245,12 @@ namespace BatchConverter
                        {
                            Progress_Output.Text = Progresss.ToString();
                        }));
-                      foreach (var directory in Directory.GetDirectories(ChoosenDirectory))
+                      foreach (var directory in Directory.GetDirectories(ChosenDirectory))
                       {
                           if (Halt_Bool) return;
                           try
                           {
-                              ChoosenDirectory = directory;
+                              ChosenDirectory = directory;
 
                               SetActiveDirectory();
                               ProcessCurrentDirectory();
@@ -288,7 +343,7 @@ namespace BatchConverter
                 Task t = Task.Factory.StartNew(() =>
               {
                   bool run = true;
-                  if (string.IsNullOrEmpty(ChoosenDirectory) || !Directory.Exists(ChoosenDirectory))
+                  if (string.IsNullOrEmpty(ChosenDirectory) || !Directory.Exists(ChosenDirectory))
                   {
                       run = false;
                       DebuggingOutput("Choose a valid Directory First!");
@@ -306,7 +361,7 @@ namespace BatchConverter
         private void ProcessCurrentDirectory()
         {
             if (!Eligable_For_Processing) return;
-            DebuggingOutput("Start Batcher: " + ChoosenDirectory);
+            DebuggingOutput("Start Batcher: " + ChosenDirectory);
             Directory.CreateDirectory(OutputDirectory);
             if (Halt_Bool) return;
             DebuggingOutput("Begin Zipping");
@@ -375,7 +430,7 @@ namespace BatchConverter
         #region ScaleImage
         private void DownscaleForWeb()
         {
-            if(!string.IsNullOrEmpty(ChoosenDirectory) && !Directory.Exists(Output_Web))
+            if(!string.IsNullOrEmpty(ChosenDirectory) && !Directory.Exists(Output_Web))
                 Directory.CreateDirectory(Output_Web);
             if (has_PBR_Specular)
             {
@@ -428,12 +483,11 @@ namespace BatchConverter
             if (!File.Exists(Output_Substance))
             {
                 DebuggingOutput("Creating new Substance zip");
-                SubstanceFileGenerationAndZip();
                 //ZipFile.CreateFromDirectory(Substance, Output_Substance);
             }
         }
 
-        private void SubstanceFileGenerationAndZip()
+        private void SubstanceFileGenerationAndZip(string sbsar_path)
         {
             // Start the child process.
             Process p = new Process();
@@ -441,7 +495,7 @@ namespace BatchConverter
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.FileName = SubstanceDir;
-            p.StartInfo.Arguments = "--inputs " + sbsar + @" --output-path C\Test\Fake --"  ;
+            p.StartInfo.Arguments = "render --inputs " + sbsar_path + @" --output-path " + SBRAROutputDirectory + " --output-format tga --set-value $outputsize@2048,2048";
             p.Start();
             // Do not wait for the child process to exit before
             // reading to the end of its redirected stream.
@@ -505,17 +559,19 @@ namespace BatchConverter
         {
             if (LOCKBUTTONS) return;
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            if(!string.IsNullOrEmpty(ChoosenDirectory))
-                dialog.SelectedPath = ChoosenDirectory;
+            if(!string.IsNullOrEmpty(ChosenDirectory))
+                dialog.SelectedPath = ChosenDirectory;
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
-                ChoosenDirectory = dialog.SelectedPath;
-                DebuggingOutput("User Picked: " + ChoosenDirectory, true);
-                if (dialog.SelectedPath != ChoosenDirectory)
+               
+                
+                DebuggingOutput("User Picked: " + ChosenDirectory, true);
+                if (dialog.SelectedPath != ChosenDirectory)
                 {
-                    Properties.Settings.Default.LastDirectory = ChoosenDirectory;
+                    ChosenDirectory = dialog.SelectedPath;
+                    Properties.Settings.Default.LastDirectory = ChosenDirectory;
                     Properties.Settings.Default.Save();
                 }
                 SetActiveDirectory();
@@ -523,7 +579,7 @@ namespace BatchConverter
             }
             else
             {
-                ChoosenDirectory = string.Empty;
+                ChosenDirectory = string.Empty;
             }
            
             DebuggingOutput("Completed parsing files in directory");
@@ -540,7 +596,7 @@ namespace BatchConverter
 
         private void SetActiveDirectory()
         {
-            DebuggingOutput("Entering Directory: " + ChoosenDirectory, true);
+            DebuggingOutput("Entering Directory: " + ChosenDirectory, true);
             Check_For_Folders();
             Process_Eligability();
             if (Eligable_For_Processing)
@@ -572,14 +628,14 @@ namespace BatchConverter
             has_PBR_Specular = Directory.Exists(PBR_Specular);
             has_Substance = Directory.Exists(Substance);
             has_WebDirectory = Directory.Exists(WebDirectory);
-            sum_subs = Directory.GetDirectories(ChoosenDirectory).Count();
+            sum_subs = Directory.GetDirectories(ChosenDirectory).Count();
             SubDirectories_Output.BeginInvoke(new MethodInvoker(() =>
             {
                 SubDirectories_Output.Text = sum_subs.ToString();
             }));
             text_ActiveDirectory.BeginInvoke(new MethodInvoker(() =>
             {
-                text_ActiveDirectory.Text = ChoosenDirectory;
+                text_ActiveDirectory.Text = ChosenDirectory;
             }));
         }
 
