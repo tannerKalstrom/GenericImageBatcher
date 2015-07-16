@@ -9,3 +9,4 @@ C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.csproj.GenerateResource.Cache
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.exe
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.pdb
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Release\BatchConverter.csprojResolveAssemblyReference.cache

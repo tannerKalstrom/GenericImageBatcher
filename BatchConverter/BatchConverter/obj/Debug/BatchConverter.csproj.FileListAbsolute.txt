@@ -1,11 +1,12 @@
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\Magick.NET-x64.dll
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.exe.config
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.exe
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.pdb
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\Interop.ATLLib.dll
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.csproj.ResolveComReference.cache
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.MainWindow.resources
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.Properties.Resources.resources
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.csproj.GenerateResource.Cache
-C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.exe.config
-C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\Magick.NET-x64.dll
-C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.exe
-C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\bin\Debug\BatchConverter.pdb
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.exe
 C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.pdb
+C:\VisualStudioProjects\BatchConverter\BatchConverter\BatchConverter\obj\Debug\BatchConverter.csprojResolveAssemblyReference.cache
