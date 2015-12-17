@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,6 +23,7 @@ namespace BatchConverter
         private string ChosenDirectory = "";
         public string ChoosenReadme = Application.StartupPath + @"\Include\Readme.txt";
         public string ChoosenScene = Application.StartupPath + @"\Include\3dScene.tbscene";
+        public string CleanScreenshots = Application.StartupPath + @"\Include\CleanScreenshots.exe";
         private string OutputDirectory {get { return ChosenDirectory + @"\OUTPUT\";}}
         private string SBRAROutputDirectory { get { return ChosenDirectory + @"\SbrarRenders\"; } }
         private string WebDirectory { get { return ChosenDirectory + @"\WEB"; } }
@@ -85,7 +86,7 @@ namespace BatchConverter
         {
             DebuggingOutput("Starting Creating GT Directory Structures",true);
             InitializeGTDir_Logic();
-            DebuggingOutput("Finnished Creating GT Directory Structures",true);
+            DebuggingOutput("Finished Creating GT Directory Structures",true);
             SetActiveDirectory();
         }
 
@@ -137,9 +138,9 @@ namespace BatchConverter
             var thi = Path.GetFileName(file);
             var corrected_file_path = thi.Substring(thi.LastIndexOf(mask));
             normalized_file_name=Path.GetFileNameWithoutExtension(normalized_file_name);
-            if (normalized_file_name.EndsWith("diffuse") || normalized_file_name.EndsWith("gloss") || normalized_file_name.EndsWith("specular"))
+            if (normalized_file_name.EndsWith("_g") || normalized_file_name.EndsWith("_s") || normalized_file_name.EndsWith("_alb"))
                 File.Copy(file, PBR_Specular + "\\" + Path.GetFileName(corrected_file_path));
-            else if (normalized_file_name.EndsWith("basecolor") || normalized_file_name.EndsWith("roughness") || normalized_file_name.EndsWith("metallic"))
+            else if (normalized_file_name.EndsWith("_basecolor") || normalized_file_name.EndsWith("_roughness") || normalized_file_name.EndsWith("_metallic"))
                 File.Copy(file, PBR_Metalic + "\\" + Path.GetFileName(corrected_file_path));
             else
             {
@@ -169,6 +170,14 @@ namespace BatchConverter
             else
             {
                 DebuggingOutput("tbscene not found");
+            }
+            if (File.Exists(CleanScreenshots))
+            {
+                File.Copy(CleanScreenshots, WebDirectory + "\\" + Path.GetFileName(CleanScreenshots));
+            }
+            else
+            {
+                DebuggingOutput("Screenshot Cleaner not found");
             }
             MagickImage DarkFile = new MagickImage(new MagickColor("#202020"), 1920, 1080);
             DarkFile.Write(WebDirectory + "\\background.png");
@@ -415,12 +424,12 @@ namespace BatchConverter
 
                     foreach (var png in png_files)
                     {
-                        MagickImage top_layer = new MagickImage(png);
-                        MagickImage Composite = new MagickImage(background);
-                        Composite.Composite(top_layer, CompositeOperator.Atop);
-                        Composite.Write(Output_Web + Path.GetFileNameWithoutExtension(png) + "_Large_Preview.png");
+                       MagickImage top_layer = new MagickImage(png);
+                      //  MagickImage Composite = new MagickImage(background);
+                     //   Composite.Composite(top_layer, CompositeOperator.Atop);
+                      //  Composite.Write(Output_Web + Path.GetFileNameWithoutExtension(png) + "_Large_Preview.png");
                         top_layer.Scale(1024, 1024);
-                        top_layer.Write(Output_Web + Path.GetFileNameWithoutExtension(png) + "_Small_Preview.png");
+                       top_layer.Write(Output_Web + Path.GetFileNameWithoutExtension(png) + "_Small_Preview.png");
                     }
                 }
             }
@@ -457,15 +466,21 @@ namespace BatchConverter
         }
         #endregion
 
-        #region ZIPPING
+       
+                #region ZIPPING
         private void Zip_Files()
         {
 
             if (!string.IsNullOrEmpty(Cat) && !string.IsNullOrEmpty(Mat))
             {
                if(has_PBR_Specular) Zip_PBR_Specular();
-               if(has_PBR_Metalic) Zip_PBR_Metalic();
-               if(has_Substance) Zip_Substance();
+                DebuggingOutput("Finished Zipping PBR Specular");
+                DebuggingOutput("Beginning Zipping PBR Metallic");
+                if (has_PBR_Metalic) Zip_PBR_Metalic();
+                DebuggingOutput("Finished Zipping PBR Metallic");
+                DebuggingOutput("Beginning Zipping Substance");
+                if (has_Substance) Zip_Substance();
+                DebuggingOutput("Finished Zipping Substance");
             }
             else
             {
@@ -483,7 +498,7 @@ namespace BatchConverter
             if (!File.Exists(Output_Substance))
             {
                 DebuggingOutput("Creating new Substance zip");
-                //ZipFile.CreateFromDirectory(Substance, Output_Substance);
+                ZipFile.CreateFromDirectory(Substance, Output_Substance);
             }
         }
 
@@ -495,7 +510,7 @@ namespace BatchConverter
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.FileName = SubstanceDir;
-            p.StartInfo.Arguments = "render --inputs " + sbsar_path + @" --output-path " + SBRAROutputDirectory + " --output-format tga --set-value $outputsize@2048,2048";
+            p.StartInfo.Arguments = "render --inputs " + sbsar_path + @" --output-path " + SBRAROutputDirectory + " --output-format tga --set-value $outputsize@11,11";
             p.Start();
             // Do not wait for the child process to exit before
             // reading to the end of its redirected stream.
@@ -515,7 +530,7 @@ namespace BatchConverter
             }
             if (!File.Exists(Output_PBR_Specular))
             {
-                DebuggingOutput("Creating new PBR_Metallic zip");
+                DebuggingOutput("Creating new PBR_Specular zip");
                 ZipFile.CreateFromDirectory(PBR_Specular, Output_PBR_Specular);
             }
         }
@@ -924,6 +939,11 @@ namespace BatchConverter
 
         }
     }
+
+        private void ProgressLabel_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
     public class ColorFader
     {
